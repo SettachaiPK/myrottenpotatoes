@@ -14,8 +14,8 @@ class MoviesController < ApplicationController
   def create
     user_params = params.require(:movie).permit(:title,:rating,:release_date)
     @movie = Movie.create!(user_params)
-    flash[:notice] = "#{@movie.title} was successfully created."
-    redirect_to movies_path
+    flash[:notice] = "#{@movie.title} was successfully created." 
+    redirect_to movie_path(@movie)
   end
   def edit
     @movie = Movie.find params[:id]
