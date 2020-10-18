@@ -41,4 +41,27 @@ class MoviesController < ApplicationController
     flash[:notice] = "Movie '#{@movie.title}' deleted."
     redirect_to movies_path
   end
+
+  def createall_from_movies(search_movie)
+      search_movie.each do |movie|
+        if Movie.exists?(:title => movie.title,:description => movie.overview) == false
+          permitted = {:title => movie.title,:rating =>"G" ,:release_date =>movie.release_date,:description => movie.overview}
+          Movie.create!(permitted)
+        end
+      end
+    end  
+
+    def search_tmdb
+      @search_params = params[:search_terms]
+      @search_params = " " if @search_params  == ""
+      @search = Tmdb::Movie.find(@search_params)
+      createall_from_movies(@search)
+      if @search != []
+        render "search"
+      else
+        flash[:warning] = "'#{params[:search_terms]}' was not found in TMDb."
+        redirect_to movies_path
+      end
+    end
 end
+
