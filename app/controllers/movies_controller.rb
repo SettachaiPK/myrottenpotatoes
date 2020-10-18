@@ -20,7 +20,7 @@ class MoviesController < ApplicationController
     # default: render 'new' template
   end 
   def create
-    user_params = params.require(:movie).permit(:title,:rating,:release_date)
+    user_params = params.require(:movie).permit(:title,:rating,:release_date,:description)
     @movie = Movie.create!(user_params)
     flash[:notice] = "#{@movie.title} was successfully created." 
     redirect_to movie_path(@movie)
@@ -30,7 +30,7 @@ class MoviesController < ApplicationController
   end
   def update
     @movie = Movie.find params[:id]
-    permitted = params[:movie].permit(:title,:rating,:release_date)
+    permitted = params[:movie].permit(:title,:rating,:release_date,:description)
     @movie.update_attributes!(permitted)
     flash[:notice] = "#{@movie.title} was successfully updated."
     redirect_to movie_path(@movie)
