@@ -9,7 +9,7 @@
       %th Release Date
       %th More Info
   %tbody
-    - @movies.order('title ASC').each_with_index do |movie, index|
+    - @movies.order('title').each_with_index do |movie, index|
       %tr
         %td= index
         %td= movie.title
