@@ -6,7 +6,7 @@ class MoviesController < ApplicationController
     if params[:commit] == "Cancel"
       redirect_to movie_path
     end
-  end  
+  end
   def index
     @movies = Movie.all
   end
