@@ -73,3 +73,7 @@ div#app_banner.banner {
   text-align: center;
   font-size: 26px;
 }
+div#login,
+p.login {
+  text-align: end;
+}
