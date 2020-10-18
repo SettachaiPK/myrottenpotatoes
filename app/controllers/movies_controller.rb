@@ -16,8 +16,13 @@ class MoviesController < ApplicationController
     # will render app/views/movies/show.html.haml by default
   end
   def new
-    @movie = Movie.new
-    # default: render 'new' template
+    if set_current_user
+      @movie = Movie.new
+      # default: render 'new' template
+    else
+      flash[:warning] = "Please log in before add movie"
+      redirect_to movies_path
+    end
   end 
   def create
     user_params = params.require(:movie).permit(:title,:rating,:release_date,:description)
@@ -52,16 +57,27 @@ class MoviesController < ApplicationController
     end  
 
     def search_tmdb
-      @search_params = params[:search_terms]
-      @search_params = " " if @search_params  == ""
-      @search = Tmdb::Movie.find(@search_params)
-      createall_from_movies(@search)
-      if @search != []
-        render "search"
+      if set_current_user
+        @search_params = params[:search_terms]
+        @search_params = " " if @search_params  == ""
+        @search = Tmdb::Movie.find(@search_params)
+        createall_from_movies(@search)
+        if @search != []
+          render "search"
+        else
+          flash[:warning] = "'#{params[:search_terms]}' was not found in TMDb."
+          redirect_to movies_path
+        end
       else
-        flash[:warning] = "'#{params[:search_terms]}' was not found in TMDb."
+        flash[:warning] = "Please log in before search"
         redirect_to movies_path
       end
+    end
+
+    def all_destroy
+      Movie.destroy_all
+      flash[:notice] = "All Movie deleted."
+      redirect_to movies_path
     end
 end
 
