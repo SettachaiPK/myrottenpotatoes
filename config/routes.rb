@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  resources :movies
+  resources :movies do
+    resources :reviews
+  end
   root :to => redirect('/movies')
   post 'logout' => 'sessions#destroy'
   get  'auth/failure' => 'sessions#failure' 
