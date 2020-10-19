@@ -17,6 +17,7 @@ class MoviesController < ApplicationController
     # will render app/views/movies/show.html.haml by default
   end
   def new
+    #@movie = Movie.new
     if set_current_user
       @movie = Movie.new
       # default: render 'new' template
@@ -58,6 +59,16 @@ class MoviesController < ApplicationController
     end  
 
     def search_tmdb
+      #@search_params = params[:search_terms]
+      #@search_params = " " if @search_params  == ""
+      #@search = Tmdb::Movie.find(@search_params)
+      #createall_from_movies(@search)
+      #if @search != []
+      #  render "search"
+      #else
+      #  flash[:warning] = "'#{params[:search_terms]}' was not found in TMDb."
+      #  redirect_to movies_path
+      #end
       if set_current_user
         @search_params = params[:search_terms]
         @search_params = " " if @search_params  == ""
