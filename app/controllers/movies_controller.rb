@@ -1,12 +1,20 @@
 class MoviesController < ApplicationController
   
   before_action :check_for_cancel, :only => [:create, :update]
+  before_action :check_for_login, :only => [:all_destroy, :new, :edit, :destroy]
 
   def check_for_cancel
     if params[:commit] == "Cancel"
       redirect_to movie_path
     end
   end
+  def check_for_login
+    unless set_current_user
+      flash[:warning] = "Please log in before do this action"
+      redirect_to movies_path
+    end
+  end
+
   def index
     @movies = Movie.all
   end
@@ -18,13 +26,8 @@ class MoviesController < ApplicationController
   end
   def new
     #@movie = Movie.new
-    if set_current_user
-      @movie = Movie.new
-      # default: render 'new' template
-    else
-      flash[:warning] = "Please log in before add movie"
-      redirect_to movies_path
-    end
+    @movie = Movie.new
+    # default: render 'new' template
   end 
   def create
     user_params = params.require(:movie).permit(:title,:rating,:release_date,:description)
@@ -52,7 +55,7 @@ class MoviesController < ApplicationController
   def createall_from_movies(search_movie)
       search_movie.each do |movie|
         if Movie.exists?(:title => movie.title,:description => movie.overview) == false
-          permitted = {:title => movie.title,:rating =>"G" ,:release_date =>movie.release_date,:description => movie.overview}
+          permitted = {:title => movie.title,:release_date =>movie.release_date,:description => movie.overview}
           Movie.create!(permitted)
         end
       end
@@ -69,19 +72,14 @@ class MoviesController < ApplicationController
       #  flash[:warning] = "'#{params[:search_terms]}' was not found in TMDb."
       #  redirect_to movies_path
       #end
-      if set_current_user
-        @search_params = params[:search_terms]
-        @search_params = " " if @search_params  == ""
-        @search = Tmdb::Movie.find(@search_params)
-        createall_from_movies(@search)
-        if @search != []
-          render "search"
-        else
-          flash[:warning] = "'#{params[:search_terms]}' was not found in TMDb."
-          redirect_to movies_path
-        end
+      @search_params = params[:search_terms]
+      @search_params = " " if @search_params  == ""
+      @search = Tmdb::Movie.find(@search_params)
+      createall_from_movies(@search)
+      if @search != []
+        render "search"
       else
-        flash[:warning] = "Please log in before search"
+        flash[:warning] = "'#{params[:search_terms]}' was not found in TMDb."
         redirect_to movies_path
       end
     end
