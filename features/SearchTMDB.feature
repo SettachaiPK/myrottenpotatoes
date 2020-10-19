@@ -1,4 +1,4 @@
-Feature: User can add movie form tmdb
+Feature: User can search movie form tmdb
 
 Scenario: SearchTMDB
   Given I am on the RottenPotatoes home page
