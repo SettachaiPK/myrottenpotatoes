@@ -26,7 +26,6 @@ class ReviewsController < ApplicationController
   end
 
   def create
-    debugger
     @current_user.reviews << @movie.reviews.build(params[:review].permit(:potatoes,:comments))
     redirect_to movie_path(@movie)
   end
