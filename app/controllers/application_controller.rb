@@ -7,6 +7,11 @@ class ApplicationController < ActionController::Base
       @current_user = Moviegoer.find_by(:id => session[:user_id])
     end
   end
+  def authenticate!
+    unless @current_user
+        redirect_to OmniAuth.login_path(:provider)
+    end
+  end
 
   require 'themoviedb'
   Tmdb::Api.key("b6067665a4204577984f4ea3bbf4274f")

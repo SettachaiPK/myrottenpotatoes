@@ -4,9 +4,48 @@
 // that code so it'll be compiled.
 
 require("@rails/ujs").start()
-require("turbolinks").start()
+require("turbolinks")
 require("@rails/activestorage").start()
 require("channels")
+require("jquery")
+require("bootstrap")
+require("packs/custom") // Here is my custom jQuery file like packs/custom.
+require("packs/movie_filter")
+
+var MoviePopup = {
+    setup: function() {
+      // add hidden 'div' to end of page to display popup:
+      var popupDiv = $('<div id="movieInfo"></div>');
+      popupDiv.hide().appendTo($('body'));
+      $(document).on('click', '#movies a', MoviePopup.getMovieInfo);
+    }
+    ,getMovieInfo: function() {
+      $.ajax({type: 'GET',
+              url: $(this).attr('href'),
+              timeout: 5000,
+              success: MoviePopup.showMovieInfo,
+              error: function(xhrObj, textStatus, exception) { alert('Error!'); }
+              // 'success' and 'error' functions will be passed 3 args
+             });
+      return(false);
+    }
+    ,showMovieInfo: function(data, requestStatus, xhrObject) {
+      // center a floater 1/2 as wide and 1/4 as tall as screen
+      var oneFourth = Math.ceil($(window).width() / 4);
+      $('#movieInfo').
+        css({'left': oneFourth,  'width': 2*oneFourth, 'top': 250}).
+        html(data).
+        show();
+      // make the Close link in the hidden element work
+      $('#closeLink').click(MoviePopup.hideMovieInfo);
+      return(false);  // prevent default link action
+    }
+    ,hideMovieInfo: function() {
+      $('#movieInfo').hide();
+      return(false);
+    }
+  };
+  $(MoviePopup.setup);
 
 
 // Uncomment to copy all static images under ../images to the output folder and reference
@@ -15,50 +54,3 @@ require("channels")
 //
 // const images = require.context('../images', true)
 // const imagePath = (name) => images(name, true)
-$(document).ready(function()
-{
-    $('#G_filter').change(function()
-    {
-        if(this.checked == true){
-         $('tr.G').show();
-    } else {
-            $('tr.G').hide();
-        };
-    });
-    $('#PG_filter').change(function()
-    {
-      if(this.checked == true){
-        $('tr.PG').show();
-      } else {
-        $('tr.PG').hide();
-      };
-    });
-  
-    $('#PG-13_filter').change(function()
-    {
-      if(this.checked == true){
-        $('tr.PG-13').show();
-      } else {
-        $('tr.PG-13').hide();
-      };
-    });
-  
-    $('#R_filter').change(function()
-    {
-      if(this.checked == true){
-        $('tr.R').show();
-      } else {
-        $('tr.R').hide();
-      };
-    });
-  
-    $('#NC-17_filter').change(function()
-    {
-      if(this.checked == true){
-        $('tr.NC-17').show();
-      } else {
-        $('tr.NC-17').hide();
-      };
-    });
-  
-  });
